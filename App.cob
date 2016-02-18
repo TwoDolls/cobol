@@ -4,4 +4,4 @@ que votre 'X' à été ajouté :
 
 Simon    : X
 Théo     : 
-Laétitia : X
+Laétitia : 
