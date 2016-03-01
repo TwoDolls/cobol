@@ -1,0 +1,13 @@
+FD fevenements.
+         01 evtsTampon.
+          02 fe_num PIC 9(6).
+          02 fe_nom PIC X(30).
+          02 fe_date.
+           03 fe_jour PIC 9(2).
+           03 fe_mois PIC 9(2).
+           03 fe_annee PIC 9(4).
+          02 fe_heure PIC 9(2).
+          02 fe_num_stade PIC 9(6).
+          02 fe_prix_base PIC 9(3).
+
+                                       CLOSE felecteurs.
