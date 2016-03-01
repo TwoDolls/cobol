@@ -167,20 +167,20 @@
           DISPLAY "|              MENU TEMPORAIRE             |"
           DISPLAY "|                                          |"
           DISPLAY "|  1  -  Ajouter Stades                    |"
-		  DISPLAY "|  1a -  Modifier Stades                    |"
-		  DISPLAY "|  1b -  Supprimer Stades                   |"
+      DISPLAY "|  1a -  Modifier Stades                    |"
+      DISPLAY "|  1b -  Supprimer Stades                   |"
           DISPLAY "|  2  -  Ajouter Places                    |"
-		  DISPLAY "|  2a -  Modifier Places                   |"
-		  DISPLAY "|  2b -  Supprimer Places                  |"
+      DISPLAY "|  2a -  Modifier Places                   |"
+      DISPLAY "|  2b -  Supprimer Places                  |"
           DISPLAY "|  3  -  Ajouter Utilisateurs              |"
-		  DISPLAY "|  3a -  Modifier Utilisateurs             |"
-		  DISPLAY "|  3b -  Supprimer Utilisateurs            |"
+      DISPLAY "|  3a -  Modifier Utilisateurs             |"
+      DISPLAY "|  3b -  Supprimer Utilisateurs            |"
           DISPLAY "|  4  -  Ajouter Evenements                |"
-		  DISPLAY "|  4a -  Modifier Evenements               |"
-		  DISPLAY "|  4b -  Supprimer Evenements              |"
+      DISPLAY "|  4a -  Modifier Evenements               |"
+      DISPLAY "|  4b -  Supprimer Evenements              |"
           DISPLAY "|  5  -  Ajouter Reservations              |"
-		  DISPLAY "|  5a -  Modifier Reservations             |"
-		  DISPLAY "|  5b -  Supprimer Reservations            |"
+      DISPLAY "|  5a -  Modifier Reservations             |"
+      DISPLAY "|  5b -  Supprimer Reservations            |"
           DISPLAY "|  0  -  Quitter                           |"
           DISPLAY "-------------------------------------------"
           DISPLAY " Choix ? "
@@ -189,8 +189,12 @@
        
           EVALUATE WswitchMenu
            WHEN 1 PERFORM AJOUT_STADE
+           WHEN 11 PERFORM MODIFIER_STADE
+           WHEN 12 PERFORM SUPPRIMER_STADE
            WHEN 2 PERFORM AJOUT_PLACE 
            WHEN 3 PERFORM AJOUT_USER
+           WHEN 31 PERFORM MODIFIER_USER
+           WHEN 32 PERFORM SUPPRIMER_USER
            WHEN 4 PERFORM AJOUT_EVENT
            WHEN 5 PERFORM AJOUT_RESA
           END-EVALUATE
@@ -240,8 +244,91 @@
           ACCEPT Wrep
          END-PERFORM
         END-PERFORM
-        CLOSE fstades
-         .          
+        CLOSE fstades.          
+
+        
+        MODIFIER_STADE.
+        OPEN I-O fstades
+        PERFORM WITH TEST AFTER UNTIL Wrep = 0
+          
+           DISPLAY "Numéro du stade à modifier : "
+           ACCEPT fs_num
+           read  fstades
+           INVALID KEY
+      *>Le numéro du stade n'existe pas
+             DISPLAY "Stade inéxistant. "
+            
+           NOT INVALID KEY
+      *>Le stade existe
+      *>Modif des valeurs
+             PERFORM WITH TEST AFTER UNTIL fs_nom NOT EQUAL " "
+              DISPLAY "Nouveau nom du stade : "
+              ACCEPT fs_nom
+             END-PERFORM   
+
+             PERFORM WITH TEST AFTER UNTIL fs_adresse NOT EQUAL " "
+              DISPLAY "Nouvelle adresse du stade : "
+              ACCEPT fs_adresse
+             END-PERFORM   
+
+             PERFORM WITH TEST AFTER UNTIL fs_nb_place > 0
+              DISPLAY "Nouveau nombre de place du stade : "
+              ACCEPT fs_nb_place
+             END-PERFORM  
+
+             REWRITE stadeTampon 
+              INVALID KEY DISPLAY 'Problème enregistrement modifications'
+              NOT INVALID KEY DISPLAY 'Modifications correctement enregistrées' 
+             END-REWRITE
+            END-READ
+            
+            PERFORM WITH TEST AFTER UNTIL Wrep = 0 OR Wrep = 1
+          DISPLAY 'Souhaitez vous continuer ? 1 ou 0'
+          ACCEPT Wrep
+         
+        
+        END-PERFORM
+         END-PERFORM
+        
+        CLOSE fstades.
+        
+        SUPPRIMER_STADE.
+        OPEN I-O fstades
+        PERFORM WITH TEST AFTER UNTIL Wrep = 0
+          
+           DISPLAY "Numéro du stade à supprimer : "
+           ACCEPT fs_num
+           READ  fstades
+           INVALID KEY
+      *>Le numéro du stade n'existe pas
+             DISPLAY "Stade inéxistant. "
+             
+           NOT INVALID KEY
+      *>Le stade existe
+           
+           DELETE fstades 
+              INVALID KEY DISPLAY 'Problème lors de la suppression'
+              NOT INVALID KEY DISPLAY 'Stade correctement supprimé' 
+             END-DELETE
+            END-READ
+        
+           PERFORM WITH TEST AFTER UNTIL Wrep = 0 OR Wrep = 1
+          DISPLAY 'Souhaitez vous continuer ? 1 ou 0'
+          ACCEPT Wrep
+        
+         END-PERFORM
+         END-PERFORM
+         CLOSE fstades.
+        
+        
+
+
+
+
+
+
+
+
 
          AJOUT_PLACE.
          OPEN I-O fplaces 
@@ -404,6 +491,102 @@
         CLOSE futilisateurs
         .       
 
+
+
+
+
+
+      MODIFIER_USER.
+        OPEN I-O futilisateurs
+        PERFORM WITH TEST AFTER UNTIL Wrep = 0
+          
+          DISPLAY "Numéro client à modifier : "
+           ACCEPT fu_num
+           READ futilisateurs
+           INVALID KEY
+      *>Le numéro du stade n'existe pas
+            DISPLAY "Utilisateur inéxistant. "
+             
+           NOT INVALID KEY
+      *>Le stade existe
+      *>Modif des valeurs
+             PERFORM WITH TEST AFTER UNTIL fu_nom NOT EQUAL " "
+              DISPLAY 'Nom : '
+              ACCEPT fu_nom
+             END-PERFORM 
+
+             PERFORM WITH TEST AFTER UNTIL fu_prenom NOT EQUAL " "
+              DISPLAY 'Prénom : '
+              ACCEPT fu_prenom
+             END-PERFORM  
+
+             PERFORM WITH TEST AFTER UNTIL fu_mdp NOT EQUAL " "
+              DISPLAY 'Mot de passe : '
+              ACCEPT fu_mdp
+             END-PERFORM
+
+             PERFORM WITH TEST AFTER UNTIL fu_ville NOT EQUAL " "
+              DISPLAY 'Ville : '
+              ACCEPT fu_ville
+             END-PERFORM
+
+             PERFORM WITH TEST AFTER UNTIL fu_question NOT EQUAL " "
+              DISPLAY 'Question secrète : '
+              ACCEPT fu_question
+             END-PERFORM
+
+             PERFORM WITH TEST AFTER UNTIL fu_reponse NOT EQUAL " "
+              DISPLAY 'Réponse secrète : '
+              ACCEPT fu_reponse
+             END-PERFORM  
+
+             REWRITE stadeTampon 
+              INVALID KEY DISPLAY 'Problème enregistrement modifications'
+              NOT INVALID KEY DISPLAY 'Modifications correctement enregistrées' 
+             END-REWRITE
+            END-READ
+            
+            PERFORM WITH TEST AFTER UNTIL Wrep = 0 OR Wrep = 1
+          DISPLAY 'Souhaitez vous continuer ? 1 ou 0'
+          ACCEPT Wrep
+         END-PERFORM
+    
+        END-PERFORM
+        CLOSE futilisateurs.
+        
+        SUPPRIMER_USER.
+        OPEN I-O futilisateurs
+        PERFORM WITH TEST AFTER UNTIL Wrep = 0
+          
+           DISPLAY "Numéro de l'utilisateur à supprimer : "
+           ACCEPT fu_num
+           READ  futilisateurs
+           INVALID KEY
+      *>Le numéro du stade n'existe pas
+            DISPLAY "Utilisateur inéxistant. "
+             
+           NOT INVALID KEY
+      *>Le stade existe
+           
+           DELETE futilisateurs 
+              INVALID KEY DISPLAY 'Problème lors de la suppression'
+              NOT INVALID KEY DISPLAY 'Utilisateur correctement supprimé' 
+             END-DELETE
+            END-READ
+        
+           PERFORM WITH TEST AFTER UNTIL Wrep = 0 OR Wrep = 1
+          DISPLAY 'Souhaitez vous continuer ? 1 ou 0'
+          ACCEPT Wrep
+         END-PERFORM
+         
+         END-PERFORM
+         CLOSE futilisateurs.
+         
+         
+         
+         
+         
+         
          AJOUT_EVENT.
          .
 
@@ -412,3 +595,4 @@
 
 
        
+
