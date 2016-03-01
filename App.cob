@@ -8,50 +8,28 @@
          SELECT futilisateurs ASSIGN TO "futilisateurs.dat"
          ORGANIZATION indexed
          ACCESS IS dynamic
-<<<<<<< HEAD
-         RECORD KEY fu_num_utilisateurs
-         FILE STATUS IS fusers_stat.
-=======
          RECORD KEY fu_num
          FILE STATUS IS fu_stat.
->>>>>>> origin/master
-
 
          SELECT fstades ASSIGN TO "fstades.dat"
          ORGANIZATION indexed
          ACCESS IS dynamic
-<<<<<<< HEAD
-         RECORD KEY fs_num_stade
-         FILE STATUS IS fstad_stat.
-=======
          RECORD KEY fs_num
          FILE STATUS IS fs_stat.
->>>>>>> origin/master
 
          SELECT fplaces ASSIGN TO "fplaces.dat"
          ORGANIZATION indexed
          ACCESS IS dynamic
          RECORD KEY fp_clef
-<<<<<<< HEAD
-         ALTERNATE RECORD KEY fs_num_stade
-         FILE STATUS IS fplac_stat.
-=======
          ALTERNATE RECORD KEY fp_num_stade
          FILE STATUS IS fp_stat.
->>>>>>> origin/master
 
          SELECT fevenements ASSIGN TO "fevements.dat"
          ORGANIZATION indexed
          ACCESS IS dynamic
-<<<<<<< HEAD
-         RECORD KEY fe_num_event
-         ALTERNATE RECORD KEY fs_num_stade
-         FILE STATUS IS fevmnt_stat.
-=======
          RECORD KEY fe_num
          ALTERNATE RECORD KEY fe_num_stade
          FILE STATUS IS fe_stat.
->>>>>>> origin/master
 
          SELECT freservations ASSIGN TO "freserv.dat"
          ORGANIZATION indexed
@@ -60,11 +38,7 @@
          ALTERNATE RECORD KEY fr_clef_place
          ALTERNATE RECORD KEY fr_num_event
          ALTERNATE RECORD KEY fr_num_utilisateur
-<<<<<<< HEAD
-         FILE STATUS IS freserva_stat.
-=======
          FILE STATUS IS fr_stat.
->>>>>>> origin/master
 
 
          DATA DIVISION.
@@ -72,71 +46,6 @@
 
          FD futilisateurs.
          01 userTampon.
-<<<<<<< HEAD
-          02 fu_num PIC X(6).
-          02 fu_nom PIC X(6).
-          02 fu_prenom PIC X(6).
-          02 fu_mdp PIC A(20).
-          02 fu_ville PIC A(20).
-          02 fu_question PIC 9(2).
-          02 fu_reponse PIC 9(2).
-
-          FD fstades.
-          01 stadeTampon.
-            02 fs_num PIC X(6).
-            02 fs_nom PIC A(20).
-            02 fs_adresse PIC A(20).
-            02 fs_nb_place PIC 9(2).
-
-          FD fplaces.
-          01 placeTampon.
-            02 fp_clef
-             03 fp_num
-             03 fp_tribune
-             03 fp_rangee
-            02 fp_num PIC 9(12).
-            02 fp_tribune PIC A(20).
-            02 fp_rangee PIC A(20).
-            02 fp_num_stade PIC 9(2).
-            02 fp_categorie PIC 9(2).
-
-         FD fevenements.
-         01 evtsTampon.
-          02 fe_num PIC X(6).
-          02 fe_nom PIC A(20).
-          02 fe_date PIC A(20).
-          02 fe_heure PIC 9(2).
-          02 fe_num_stade PIC 9(2).
-          02 fe_prix_base PIC 9(2).
-
-         FD freservations.
-         01 reservTampon.
-          02 fr_clef
-           03 fr_num_utilisateur
-           03 fr_num_event
-           03 fr_num_place
-           03 fr_tribunes
-           03 fr_rangee
-          02 fr_clef_place
-           03 fr_num_place
-           03 fr_tribunes
-           03 fr_rangee
-          02 fr_num_utilisateur PIC X(6).
-          02 fr_num_event PIC A(20).
-          02 fr_num_place PIC A(20).
-          02 fr_tribunes PIC 9(2).
-          02 fr_rangee PIC 9(2).
-          02 fr_age PIC 9(2).
-          02 fr_prix PIC 9(2).
-
-
-         WORKING-STORAGE SECTION.
-
-
-         PROCEDURE DIVISION.
-
-         STOP RUN.
-=======
           02 fu_num PIC 9(6).
           02 fu_nom PIC A(30).
           02 fu_prenom PIC A(20).
@@ -204,10 +113,39 @@
          77 WalreadyExists PIC 9.
          77 WnotalreadyExists PIC 9.
          77 Wtemporaire PIC 9(2).
+         77 Wswitch PIC 9(2).
 
       *>Variable locale à AJOUT_PLACE
          77 Wnb_PlaceStade PIC 9(3).
          77 Wlock PIC 9.
+
+
+      *>Variable locale à AJOUT_EVENTS
+         77 Wexiste PIC X(3).
+
+      *>Variable locale à SAISIE_JOUR
+         77 Wmoismax PIC 9(2).
+         77 Wmois PIC 9(2).
+         77 Wcas1 PIC 9(2).
+         77 Wcas2 PIC 9(2).
+         77 Wcas3 PIC 9(2).
+         77 Wjour PIC 9(2).
+
+      *>Variable locale à SAISIE-MOIS
+         77 Wannee PIC 9(2).
+
+
+      *>Varaible locale à MODIF_EVENT
+          77 Wnom PIC A(15).
+          77 Wnnom PIC A(15).
+          77 Wnmois PIC 9(2).
+          77 Wtrouve PIC 9(2).
+          77 Wfin PIC 9(2).
+          77 WnnumStade PIC 9(3).
+          77 WnprixBase PIC 9(3).
+
+       *>Variable locale à SUPP_EVENT
+            77 Wnum PIC 9(4).
 
          PROCEDURE DIVISION.
       *>Main
@@ -258,20 +196,20 @@
           DISPLAY "|              MENU TEMPORAIRE             |"
           DISPLAY "|                                          |"
           DISPLAY "|  1  -  Ajouter Stades                    |"
-      DISPLAY "|  1a -  Modifier Stades                    |"
-      DISPLAY "|  1b -  Supprimer Stades                   |"
+		  DISPLAY "|  1a -  Modifier Stades                    |"
+		  DISPLAY "|  1b -  Supprimer Stades                   |"
           DISPLAY "|  2  -  Ajouter Places                    |"
-      DISPLAY "|  2a -  Modifier Places                   |"
-      DISPLAY "|  2b -  Supprimer Places                  |"
+		  DISPLAY "|  2a -  Modifier Places                   |"
+		  DISPLAY "|  2b -  Supprimer Places                  |"
           DISPLAY "|  3  -  Ajouter Utilisateurs              |"
-      DISPLAY "|  3a -  Modifier Utilisateurs             |"
-      DISPLAY "|  3b -  Supprimer Utilisateurs            |"
+		  DISPLAY "|  3a -  Modifier Utilisateurs             |"
+		  DISPLAY "|  3b -  Supprimer Utilisateurs            |"
           DISPLAY "|  4  -  Ajouter Evenements                |"
-      DISPLAY "|  4a -  Modifier Evenements               |"
-      DISPLAY "|  4b -  Supprimer Evenements              |"
+		  DISPLAY "|  4a -  Modifier Evenements               |"
+		  DISPLAY "|  4b -  Supprimer Evenements              |"
           DISPLAY "|  5  -  Ajouter Reservations              |"
-      DISPLAY "|  5a -  Modifier Reservations             |"
-      DISPLAY "|  5b -  Supprimer Reservations            |"
+		  DISPLAY "|  5a -  Modifier Reservations             |"
+		  DISPLAY "|  5b -  Supprimer Reservations            |"
           DISPLAY "|  0  -  Quitter                           |"
           DISPLAY "-------------------------------------------"
           DISPLAY " Choix ? "
@@ -280,17 +218,47 @@
        
           EVALUATE WswitchMenu
            WHEN 1 PERFORM AJOUT_STADE
-           WHEN 11 PERFORM MODIFIER_STADE
-           WHEN 12 PERFORM SUPPRIMER_STADE
            WHEN 2 PERFORM AJOUT_PLACE 
            WHEN 3 PERFORM AJOUT_USER
-           WHEN 31 PERFORM MODIFIER_USER
-           WHEN 32 PERFORM SUPPRIMER_USER
            WHEN 4 PERFORM AJOUT_EVENT
-           WHEN 5 PERFORM AJOUT_RESA
+           WHEN 5 PERFORM MODIF_EVENT
+           WHEN 6 PERFORM SUPP_EVENT
+           WHEN 7 PERFORM AJOUT_RESA
+
           END-EVALUATE
+          PERFORM SAISIE_JOUR
+          PERFORM SAISIE_MOIS
          END-PERFORM 
-         STOP RUN.         
+         STOP RUN.
+
+
+         SAISIE_MOIS.
+          EVALUATE Wmois
+              WHEN Wcas1 1 4 6 8 10 12
+                   Wmoismax = 31;
+              WHEN Wcas2 2
+                   Wmoismax = 29;
+              WHEN Wcas3 3 5 9 11
+                   Wmoismax = 30;
+          END-EVALUATE
+          PERFORM WITH TEST AFTER UNTIL fe_jour > 0 AND fe_jour <= Wmoismax
+              DISPLAY 'Jour < 1 AND Wmoismax ? '
+              ACCEPT fe_jour
+           END-PERFORM
+
+          SAISIE_JOUR.
+           IF Wmois = Wcas1 THEN
+             Wjour > 1 AND Wjour < 31
+           ELSE IF Wmois = Wcas2 THEN
+              IF Wannee = Wannee / 400 THEN
+                 Wjour = 29
+              ELSE
+                 Wjour = 28
+              END-IF
+           ELSE
+             Wjour > 1 AND Wjour < 30
+           END-IF
+
 
          AJOUT_STADE.
          OPEN I-O fstades
@@ -335,91 +303,7 @@
           ACCEPT Wrep
          END-PERFORM
         END-PERFORM
-        CLOSE fstades.          
-
-        
-        MODIFIER_STADE.
-        OPEN I-O fstades
-        PERFORM WITH TEST AFTER UNTIL Wrep = 0
-          
-           DISPLAY "Numéro du stade à modifier : "
-           ACCEPT fs_num
-           read  fstades
-           INVALID KEY
-      *>Le numéro du stade n'existe pas
-             DISPLAY "Stade inéxistant. "
-            
-           NOT INVALID KEY
-      *>Le stade existe
-      *>Modif des valeurs
-             PERFORM WITH TEST AFTER UNTIL fs_nom NOT EQUAL " "
-              DISPLAY "Nouveau nom du stade : "
-              ACCEPT fs_nom
-             END-PERFORM   
-
-             PERFORM WITH TEST AFTER UNTIL fs_adresse NOT EQUAL " "
-              DISPLAY "Nouvelle adresse du stade : "
-              ACCEPT fs_adresse
-             END-PERFORM   
-
-             PERFORM WITH TEST AFTER UNTIL fs_nb_place > 0
-              DISPLAY "Nouveau nombre de place du stade : "
-              ACCEPT fs_nb_place
-             END-PERFORM  
-
-             REWRITE stadeTampon 
-              INVALID KEY DISPLAY 'Problème enregistrement modifications'
-              NOT INVALID KEY DISPLAY 'Modifications correctement enregistrées' 
-             END-REWRITE
-            END-READ
-            
-            PERFORM WITH TEST AFTER UNTIL Wrep = 0 OR Wrep = 1
-          DISPLAY 'Souhaitez vous continuer ? 1 ou 0'
-          ACCEPT Wrep
-         
-        
-        END-PERFORM
-         END-PERFORM
-        
         CLOSE fstades.
-        
-        SUPPRIMER_STADE.
-        OPEN I-O fstades
-        PERFORM WITH TEST AFTER UNTIL Wrep = 0
-          
-           DISPLAY "Numéro du stade à supprimer : "
-           ACCEPT fs_num
-           READ  fstades
-           INVALID KEY
-      *>Le numéro du stade n'existe pas
-             DISPLAY "Stade inéxistant. "
-             
-           NOT INVALID KEY
-      *>Le stade existe
-           
-           DELETE fstades 
-              INVALID KEY DISPLAY 'Problème lors de la suppression'
-              NOT INVALID KEY DISPLAY 'Stade correctement supprimé' 
-             END-DELETE
-            END-READ
-        
-           PERFORM WITH TEST AFTER UNTIL Wrep = 0 OR Wrep = 1
-          DISPLAY 'Souhaitez vous continuer ? 1 ou 0'
-          ACCEPT Wrep
-        
-         END-PERFORM
-         END-PERFORM
-         CLOSE fstades.
-        
-        
-
-
-
-
-
-
-
-
 
          AJOUT_PLACE.
          OPEN I-O fplaces 
@@ -516,8 +400,7 @@
          END-PERFORM
         END-PERFORM
         CLOSE fplaces  
-        CLOSE fstades      
-        .
+        CLOSE fstades.
 
          AJOUT_USER.
       *>Ouverture en écriture/lecture pour vérification + MAJ
@@ -579,106 +462,209 @@
           ACCEPT Wrep
          END-PERFORM
         END-PERFORM
-        CLOSE futilisateurs
-        .       
-
-
-
-
-
-
-      MODIFIER_USER.
-        OPEN I-O futilisateurs
-        PERFORM WITH TEST AFTER UNTIL Wrep = 0
-          
-          DISPLAY "Numéro client à modifier : "
-           ACCEPT fu_num
-           READ futilisateurs
-           INVALID KEY
-      *>Le numéro du stade n'existe pas
-            DISPLAY "Utilisateur inéxistant. "
-             
-           NOT INVALID KEY
-      *>Le stade existe
-      *>Modif des valeurs
-             PERFORM WITH TEST AFTER UNTIL fu_nom NOT EQUAL " "
-              DISPLAY 'Nom : '
-              ACCEPT fu_nom
-             END-PERFORM 
-
-             PERFORM WITH TEST AFTER UNTIL fu_prenom NOT EQUAL " "
-              DISPLAY 'Prénom : '
-              ACCEPT fu_prenom
-             END-PERFORM  
-
-             PERFORM WITH TEST AFTER UNTIL fu_mdp NOT EQUAL " "
-              DISPLAY 'Mot de passe : '
-              ACCEPT fu_mdp
-             END-PERFORM
-
-             PERFORM WITH TEST AFTER UNTIL fu_ville NOT EQUAL " "
-              DISPLAY 'Ville : '
-              ACCEPT fu_ville
-             END-PERFORM
-
-             PERFORM WITH TEST AFTER UNTIL fu_question NOT EQUAL " "
-              DISPLAY 'Question secrète : '
-              ACCEPT fu_question
-             END-PERFORM
-
-             PERFORM WITH TEST AFTER UNTIL fu_reponse NOT EQUAL " "
-              DISPLAY 'Réponse secrète : '
-              ACCEPT fu_reponse
-             END-PERFORM  
-
-             REWRITE stadeTampon 
-              INVALID KEY DISPLAY 'Problème enregistrement modifications'
-              NOT INVALID KEY DISPLAY 'Modifications correctement enregistrées' 
-             END-REWRITE
-            END-READ
-            
-            PERFORM WITH TEST AFTER UNTIL Wrep = 0 OR Wrep = 1
-          DISPLAY 'Souhaitez vous continuer ? 1 ou 0'
-          ACCEPT Wrep
-         END-PERFORM
-    
-        END-PERFORM
         CLOSE futilisateurs.
-        
-        SUPPRIMER_USER.
-        OPEN I-O futilisateurs
-        PERFORM WITH TEST AFTER UNTIL Wrep = 0
-          
-           DISPLAY "Numéro de l'utilisateur à supprimer : "
-           ACCEPT fu_num
-           READ  futilisateurs
-           INVALID KEY
-      *>Le numéro du stade n'existe pas
-            DISPLAY "Utilisateur inéxistant. "
-             
-           NOT INVALID KEY
-      *>Le stade existe
-           
-           DELETE futilisateurs 
-              INVALID KEY DISPLAY 'Problème lors de la suppression'
-              NOT INVALID KEY DISPLAY 'Utilisateur correctement supprimé' 
-             END-DELETE
-            END-READ
-        
-           PERFORM WITH TEST AFTER UNTIL Wrep = 0 OR Wrep = 1
-          DISPLAY 'Souhaitez vous continuer ? 1 ou 0'
-          ACCEPT Wrep
-         END-PERFORM
-         
-         END-PERFORM
-         CLOSE futilisateurs.
-         
-         
-         
-         
-         
-         
+
+*>Laetitia
          AJOUT_EVENT.
+                  OPEN I-O fevenements
+                  PERFORM WITH TEST AFTER UNTIL Wrep = 0
+                   DISPLAY "Donnez les informations de l'evenement : "
+                  MOVE 1 TO Wexiste
+                  PERFORM WITH TEST AFTER UNTIL Wexiste = 0
+                    DISPLAY "Numéro evenement : "
+                    ACCEPT fe_num
+                   READ fevenements
+               *>Le code utilisateur n'existe pas alors on peut l'ajouer
+                     INVALID KEY
+                      MOVE 0 TO Wexiste
+               *>Renseignements des valeurs
+                      PERFORM WITH TEST AFTER UNTIL fe_nom NOT EQUAL " "
+                       DISPLAY 'Nom : '
+                       ACCEPT fe_nom
+                      END-PERFORM
+
+
+                      PERFORM WITH TEST AFTER UNTIL fe_mois NOT EQUAL " "
+                       DISPLAY 'Mois : '
+                       ACCEPT fe_mois
+                       SAISIE_MOIS.
+                      END-PERFORM
+
+                     PERFORM WITH TEST AFTER UNTIL fe_jour NOT EQUAL " "
+                      DISPLAY 'Jour : '
+                      ACCEPT fe_jour
+                      SAISIE_JOUR.
+                     END-PERFORM
+
+                     END-PERFORM
+
+                     PERFORM WITH TEST AFTER UNTIL fe_annee > 4
+                      DISPLAY 'Annee : '
+                      ACCEPT fe_annee
+                     END-PERFORM
+
+                      PERFORM WITH TEST AFTER UNTIL fe_num_stade > 0
+                       DISPLAY 'Numero de stade : '
+                       ACCEPT fe_num_stade
+                      END-PERFORM
+
+                      PERFORM WITH TEST AFTER UNTIL fe_prix_base > 0
+                       DISPLAY 'Prix de base souhaité : '
+                       ACCEPT fe_prix_base
+                      END-PERFORM
+
+                      WRITE eventTampon
+                       INVALID KEY DISPLAY 'Problème enregistrement'
+                       NOT INVALID KEY DISPLAY 'Enregistrement inséré'
+
+                     NOT INVALID KEY
+               *>Le numéro de l'evenement existe déjà
+                    DISPLAY 'Numéro evenement déjà utilisé.'
+                  END-READ
+                 END-PERFORM
+
+                  PERFORM WITH TEST AFTER UNTIL Wrep = 0 OR Wrep = 1
+                   DISPLAY 'Souhaitez vous continuer ? 1 ou 0'
+                   ACCEPT Wrep
+                  END-PERFORM
+                 END-PERFORM
+                 CLOSE fevenements.
+
+
+
+                              MODIF_EVENT.
+
+                              PERFORM WITH TEST AFTER UNTIL Wrep = 0
+                                  DISPLAY 'Donnez le numero de l'element que vous voulez modifier '
+                                  DISPLAY 'Num event ?'
+                                  ACCEPT fe_num
+                                  WRITE eventTampon END-WRITE
+                                  OPEN INPUT fevenements
+                                       MOVE 0 TO Wfin
+                                       PERFORM WITH TEST AFTER UNTIL Wtrouve = 1 OR Wfin = 1
+                                        READ fevenements
+                                        AT END MOVE 1 TO Wfin
+                                         DISPLAY 'Evenement inexistant'
+                                       NOT AT END
+                                       PERFORM WITH TEST AFTER UNTIL Wswitch < 1
+                                       DISPLAY fe_num
+                                       DISPLAY ' Quel element voulez-vous modifier ? '
+                                       DISPLAY '1. Nom '
+                                       DISPLAY '2. Date'
+                                       DISPLAY '4. Num de stade'
+                                       DISPLAY '5. Prix de base'
+                                       DISPLAY " Choix ? "
+                                                 ACCEPT Wswitch
+                                                 EVALUATE Wswitch
+                                                  WHEN 1
+                                                  DISPLAY 'Nom recherché ?'
+                                                   OPEN INPUT fevenements
+                                                     MOVE 0 TO Wfin
+                                                     PERFORM WITH TEST AFTER UNTIL Wtrouve = 1 OR Wfin = 1
+                                                       READ fevenements
+                                                       AT END MOVE 1 TO Wfin
+                                                       DISPLAY 'Evenement inexistant'
+                                                       NOT AT END
+                                                          IF fe_nom = Wnom THEN
+                                                            MOVE 1 TO Wtrouve
+                                                            DISPLAY ' Nouveau nom? '
+                                                            ACCEPT WnNom
+                                                            MOVE WnNom TO fe_nom
+                                                          END-IF
+                                                     END-PERFORM
+                                                   CLOSE fevenements.
+
+                                                  WHEN 2
+                                                    DISPLAY 'Date recherché :'
+                                                    DISPLAY ' Mois?'
+                                                    ACCEPT Wmois
+                                                    SAISIE_MOIS
+                                                    DISPLAY 'Jour?'
+                                                    ACCEPT Wjour
+                                                    SAISIE_JOUR
+                                                    OPEN INPUT fevenements
+                                                    MOVE 0 TO Wfin
+                                                    PERFORM WITH TEST AFTER UNTIL Wtrouve = 1 OR Wfin = 1
+                                                    READ fevenements
+                                                    AT END MOVE 1 TO Wfin
+                                                    DISPLAY 'Mois inexistant'
+                                                      NOT AT END
+                                                      IF fe_mois = Wmois THEN
+                                                          MOVE 1 TO Wtrouve
+                                                          DISPLAY ' Nouveau mois? '
+                                                          ACCEPT Wnmois
+                                                          SAISIE_MOIS
+                                                          MOVE Wnmois TO fe_mois
+                                                       END-IF
+                                                       IF fe_jour = Wjour
+                                                          MOVE 1 TO Wtrouve
+                                                          DISPLAY 'Nouveau Jour'
+                                                          ACCEPT Wnjour
+                                                          SAISIE_JOUR
+                                                          MOVE Wnjour TO fe_jour
+                                                      END-IF
+                                                    END-PERFORM
+                                                     CLOSE fevenements.
+
+                                                  WHEN 4
+                                                   DISPLAY 'Num Stade ?'
+                                                    OPEN INPUT fevenements
+                                                    MOVE 0 TO Wfin
+                                                    PERFORM WITH TEST AFTER UNTIL Wtrouve = 1 OR Wfin = 1
+                                                    READ fevenements
+                                                    AT END MOVE 1 TO Wfin
+                                                    DISPLAY 'Evenement inexistant'
+                                                      NOT AT END
+                                                      IF fe_num_stade = WnumStade THEN
+                                                          MOVE 1 TO Wtrouve
+                                                          DISPLAY ' Nouveau numero stade? '
+                                                          ACCEPT WnnumStade
+                                                          MOVE WnnumStade TO fe_num_stade
+                                                      END-IF
+                                                    END-PERFORM
+                                                     CLOSE fevenements.
+
+                                                  WHEN 5
+                                                    DISPLAY 'Prix de Base ?'
+                                                    OPEN INPUT fevenements
+                                                    MOVE 0 TO Wfin
+                                                    PERFORM WITH TEST AFTER UNTIL Wtrouve = 1 OR Wfin = 1
+                                                    READ fevenements
+                                                    AT END MOVE 1 TO Wfin
+                                                    DISPLAY 'Prix inexistant'
+                                                      NOT AT END
+                                                      IF fe_prix_base = WprixBase THEN
+                                                          MOVE 1 TO Wtrouve
+                                                          DISPLAY ' Nouveau prix de base? '
+                                                          ACCEPT WnprixBase
+                                                          MOVE WnprixBase TO fe_prix_base
+                                                      END-IF
+                                                    END-PERFORM
+                                                     CLOSE fevenements.
+                                                 END-EVALUATE
+                                       END-PERFORM
+                                       END-PERFORM
+                                       END-PERFORM.
+
+                 SUPP_EVENT.
+
+                 DISPLAY ' Numero evenement? '
+                 ACCEPT Wnum_event
+                 OPEN INPUT fevenements
+                  MOVE 0 TO Wfin
+                  PERFORM WITH TEST AFTER UNTIL Wtrouve = 1 OR Wfin = 1
+                     READ fevenements
+                     AT END MOVE 1 TO Wfin
+                        DISPLAY 'Prix inexistant'
+                     NOT AT END
+                      IF fe_num = Wnum THEN
+                         MOVE 1 TO Wtrouve
+                         DELETE fe_num
+                      END-IF
+                  END-PERFORM.
+                  CLOSE fevenements.
+
+
          .
 
          AJOUT_RESA.
@@ -686,5 +672,3 @@
 
 
        
->>>>>>> origin/master
-
