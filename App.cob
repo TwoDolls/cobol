@@ -305,6 +305,82 @@
         END-PERFORM
         CLOSE fstades.
 
+
+        MODIFIER_STADE.
+        OPEN I-O fstades
+        PERFORM WITH TEST AFTER UNTIL Wrep = 0
+          
+           DISPLAY "Numéro du stade à modifier : "
+           ACCEPT fs_num
+           read  fstades
+           INVALID KEY
+      *>Le numéro du stade n'existe pas
+             DISPLAY "Stade inéxistant. "
+            
+           NOT INVALID KEY
+      *>Le stade existe
+      *>Modif des valeurs
+             PERFORM WITH TEST AFTER UNTIL fs_nom NOT EQUAL " "
+              DISPLAY "Nouveau nom du stade : "
+              ACCEPT fs_nom
+             END-PERFORM   
+
+             PERFORM WITH TEST AFTER UNTIL fs_adresse NOT EQUAL " "
+              DISPLAY "Nouvelle adresse du stade : "
+              ACCEPT fs_adresse
+             END-PERFORM   
+
+             PERFORM WITH TEST AFTER UNTIL fs_nb_place > 0
+              DISPLAY "Nouveau nombre de place du stade : "
+              ACCEPT fs_nb_place
+             END-PERFORM  
+
+             REWRITE stadeTampon 
+              INVALID KEY DISPLAY 'Problème enregistrement modifications'
+              NOT INVALID KEY DISPLAY 'Modifications correctement enregistrées' 
+             END-REWRITE
+            END-READ
+            
+            PERFORM WITH TEST AFTER UNTIL Wrep = 0 OR Wrep = 1
+          DISPLAY 'Souhaitez vous continuer ? 1 ou 0'
+          ACCEPT Wrep
+         
+        
+        END-PERFORM
+         END-PERFORM
+        
+        CLOSE fstades.
+        
+        SUPPRIMER_STADE.
+        OPEN I-O fstades
+        PERFORM WITH TEST AFTER UNTIL Wrep = 0
+          
+           DISPLAY "Numéro du stade à supprimer : "
+           ACCEPT fs_num
+           READ  fstades
+           INVALID KEY
+      *>Le numéro du stade n'existe pas
+             DISPLAY "Stade inéxistant. "
+             
+           NOT INVALID KEY
+      *>Le stade existe
+           
+           DELETE fstades 
+              INVALID KEY DISPLAY 'Problème lors de la suppression'
+              NOT INVALID KEY DISPLAY 'Stade correctement supprimé' 
+             END-DELETE
+            END-READ
+        
+           PERFORM WITH TEST AFTER UNTIL Wrep = 0 OR Wrep = 1
+          DISPLAY 'Souhaitez vous continuer ? 1 ou 0'
+          ACCEPT Wrep
+        
+         END-PERFORM
+         END-PERFORM
+         CLOSE fstades.
+
+
+
          AJOUT_PLACE.
          OPEN I-O fplaces 
          OPEN INPUT fstades
@@ -464,6 +540,96 @@
         END-PERFORM
         CLOSE futilisateurs.
 
+
+
+         MODIFIER_USER.
+        OPEN I-O futilisateurs
+        PERFORM WITH TEST AFTER UNTIL Wrep = 0
+          
+          DISPLAY "Numéro client à modifier : "
+           ACCEPT fu_num
+           READ futilisateurs
+           INVALID KEY
+      *>Le numéro du stade n'existe pas
+            DISPLAY "Utilisateur inéxistant. "
+             
+           NOT INVALID KEY
+      *>Le stade existe
+      *>Modif des valeurs
+             PERFORM WITH TEST AFTER UNTIL fu_nom NOT EQUAL " "
+              DISPLAY 'Nom : '
+              ACCEPT fu_nom
+             END-PERFORM 
+
+             PERFORM WITH TEST AFTER UNTIL fu_prenom NOT EQUAL " "
+              DISPLAY 'Prénom : '
+              ACCEPT fu_prenom
+             END-PERFORM  
+
+             PERFORM WITH TEST AFTER UNTIL fu_mdp NOT EQUAL " "
+              DISPLAY 'Mot de passe : '
+              ACCEPT fu_mdp
+             END-PERFORM
+
+             PERFORM WITH TEST AFTER UNTIL fu_ville NOT EQUAL " "
+              DISPLAY 'Ville : '
+              ACCEPT fu_ville
+             END-PERFORM
+
+             PERFORM WITH TEST AFTER UNTIL fu_question NOT EQUAL " "
+              DISPLAY 'Question secrète : '
+              ACCEPT fu_question
+             END-PERFORM
+
+             PERFORM WITH TEST AFTER UNTIL fu_reponse NOT EQUAL " "
+              DISPLAY 'Réponse secrète : '
+              ACCEPT fu_reponse
+             END-PERFORM  
+
+             REWRITE stadeTampon 
+              INVALID KEY DISPLAY 'Problème enregistrement modifications'
+              NOT INVALID KEY DISPLAY 'Modifications correctement enregistrées' 
+             END-REWRITE
+            END-READ
+            
+            PERFORM WITH TEST AFTER UNTIL Wrep = 0 OR Wrep = 1
+          DISPLAY 'Souhaitez vous continuer ? 1 ou 0'
+          ACCEPT Wrep
+         END-PERFORM
+    
+        END-PERFORM
+        CLOSE futilisateurs.
+        
+        SUPPRIMER_USER.
+        OPEN I-O futilisateurs
+        PERFORM WITH TEST AFTER UNTIL Wrep = 0
+          
+           DISPLAY "Numéro de l'utilisateur à supprimer : "
+           ACCEPT fu_num
+           READ  futilisateurs
+           INVALID KEY
+      *>Le numéro du stade n'existe pas
+            DISPLAY "Utilisateur inéxistant. "
+             
+           NOT INVALID KEY
+      *>Le stade existe
+           
+           DELETE futilisateurs 
+              INVALID KEY DISPLAY 'Problème lors de la suppression'
+              NOT INVALID KEY DISPLAY 'Utilisateur correctement supprimé' 
+             END-DELETE
+            END-READ
+        
+           PERFORM WITH TEST AFTER UNTIL Wrep = 0 OR Wrep = 1
+          DISPLAY 'Souhaitez vous continuer ? 1 ou 0'
+          ACCEPT Wrep
+         END-PERFORM
+         
+         END-PERFORM
+         CLOSE futilisateurs.
+
+
+         
 *>Laetitia
          AJOUT_EVENT.
                   OPEN I-O fevenements
